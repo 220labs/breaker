@@ -1,0 +1,28 @@
+{
+  "port": 8787,
+  "adminKey": "admin-demo-key",
+  "demoKey": "gw-web-123",
+  "providers": {
+    "mock": {},
+    "anthropic": { "apiKeyEnv": "ANTHROPIC_API_KEY" },
+    "openai": { "apiKeyEnv": "OPENAI_API_KEY" },
+    "gemini": { "apiKeyEnv": "GEMINI_API_KEY" }
+  },
+  "models": {
+    "smart": { "strategy": "priority", "targets": ["anthropic/claude-sonnet-5-5", "openai/gpt-4o", "mock/mock-pro"], "fallback": ["fast"] },
+    "fast": { "strategy": "least-latency", "targets": ["anthropic/claude-haiku-5-5", "gemini/gemini-2.5-flash", "mock/mock-fast", "mock/mock-alt"] },
+    "balanced": { "strategy": "weighted", "targets": [{ "id": "mock/mock-fast", "weight": 3 }, { "id": "mock/mock-alt", "weight": 1 }] },
+    "flaky-demo": { "strategy": "priority", "targets": ["mock/mock-flaky", "mock/mock-fast"] }
+  },
+  "keys": [
+    { "id": "support-agent", "key": "gw-web-123", "models": ["*"], "rpm": 120, "tpm": 400000, "budgetUsd": 5, "budgetPeriod": "day", "onBudget": "deny" },
+    { "id": "intern-bot", "key": "gw-intern-456", "models": ["fast", "smart", "mock-agent"], "budgetUsd": 0.002, "budgetPeriod": "day", "onBudget": "downgrade", "downgradeTo": "fast" },
+    { "id": "batch-agent", "key": "gw-batch-789", "models": ["*"], "rpm": 5 },
+    { "id": "claude-code", "key": "gw-cc-321", "models": ["*"], "rpm": 600, "guardrails": { "pii": "off" }, "taint": { "sources": ["WebFetch", "WebSearch", "web_fetch", "read_email"], "sinks": ["Bash", "Write", "Edit", "NotebookEdit", "send_email", "http_post"] } }
+  ],
+  "guardrails": { "pii": "redact", "blockedTerms": ["project-nightingale"], "promptInjection": "block", "maxInputTokens": 50000 },
+  "taint": { "mode": "block", "sources": ["read_email", "web_fetch", "web_search", "browse", "fetch_url", "WebFetch", "WebSearch", "search_web", "slack_read", "read_document"], "trustedTools": ["calculator"], "sinks": ["send_email", "http_request", "http_post", "post_message", "bash", "write_file", "transfer_funds", "create_webhook"] },
+  "cache": { "enabled": true, "ttlSeconds": 3600, "semantic": true, "threshold": 0.82 },
+  "shadow": [ { "name": "smart → fast", "alias": "smart", "candidate": "mock/mock-fast", "sampleRate": 1.0, "judge": "local" } ],
+  "db": "data/gateway.db"
+}

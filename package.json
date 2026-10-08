@@ -1,0 +1,13 @@
+{
+  "name": "breaker",
+  "version": "0.1.0",
+  "description": "Self-hosted, OpenAI-compatible model gateway with routing, failover, quotas, budgets, caching, guardrails and shadow evaluation.",
+  "type": "module",
+  "license": "MIT",
+  "engines": { "node": ">=22.5" },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/",
+    "demo": "sh scripts/demo.sh"
+  }
+}
