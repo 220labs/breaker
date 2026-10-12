@@ -1,7 +1,7 @@
 {
   "name": "breaker",
   "version": "0.1.0",
-  "description": "Self-hosted, OpenAI-compatible model gateway with routing, failover, quotas, budgets, caching, guardrails and shadow evaluation.",
+  "description": "A self-hosted agent gateway built in the film 220. Not endorsed for production; see docs/review-2026-10-11.md.",
   "type": "module",
   "license": "MIT",
   "engines": { "node": ">=22.5" },
